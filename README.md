@@ -2,6 +2,7 @@
 This repo is based on https://github.com/awslabs/amazon-polly-sample but with big modifications:
 1. This one does not include the ZIP file pachage but instead gives you the instructions on how to use Docker to build the package (see end of this README)
 2. Updated requirements (upgraded AWSCLI)
+3. Updated S3 URL format in the lamdba_function code (using Environment variables for the bucket's region)
 
 
 # Amazon Polly Sample
