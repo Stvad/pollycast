@@ -102,7 +102,8 @@ Some technical experience is required to setup your own instance of the app, but
 * With Docker you can very easily can run a Linux container locally on your Mac, install the Python libraries within the container so they are automatically in the right Linux format, and zip up the files ready to upload to AWS. 
 * You’ll need Docker for Mac installed first. (https://www.docker.com/products/docker)
 
-2. Spin up an Ubuntu container which will have the lambda code you want to package:
+2. Spin up an Ubuntu container which will have the lambda code you want to package
+    * run the following command:
 
         ```
         $ docker run -v <full path directory with your code>:/working -it --rm ubuntu
@@ -110,23 +111,23 @@ Some technical experience is required to setup your own instance of the app, but
         The -v flag makes your code directory available inside the container in a directory called “working”.
         You should now be inside the container at a shell prompt.
 
-3. Install pip and zip:
-
+3. Install pip and zip.
+    * run the following commands:    
         ```
         $ apt-get update
         $ apt-get install python-pip
         $ apt-get install zip
         ```
 
-4. Install the python requirements:
-
+4. Install the python requirements.
+    * run the following commands:    
         ```
         $ cd working
         $ pip install -r requirements.txt -t .
         ```
 
-5. Package your code:
-
+5. Package your code.
+    * run the following commands:
         ```
         $ zip package.zip podcast.py
         $ zip -r package.zip .
@@ -134,7 +135,8 @@ Some technical experience is required to setup your own instance of the app, but
 
 Voila! Your package file is ready to be used in Lambda.
 
-## When uploading your package in Lambda, don't forget the enviroment variable "AWS_REGION_BUCKET" which is the region where you created the bucket that will hold the podcast.
+## IMPORTANT
+1.  When uploading your package in Lambda, don't forget the enviroment variable "AWS_REGION_BUCKET" which is the region where you created the bucket that will hold the podcast.
 
 ## Summary
 That's it! Your podcast is ready. Use it on your own, or share the URL with your friends. Optionally publish it as an audio version of your own blog (if you are the content owner).
