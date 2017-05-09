@@ -107,7 +107,7 @@ def handler(event, context):
         fe.id(entry['id'])
         fe.title(entry['title'])
         fe.published(entry['published'])
-        entry_url = ENTRY_URL.format(bucket=bucket_name, filename=filename, region=os.environ["AWS_REGION"])
+        entry_url = ENTRY_URL.format(bucket=bucket_name, filename=filename, region=os.environ["AWS_REGION_BUCKET"])
         fe.enclosure(entry_url, 0, 'audio/mpeg')
         if filename in files:
             logging.info('Article "%s" with id %s already exist, skipping.'
