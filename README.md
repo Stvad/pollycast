@@ -141,6 +141,19 @@ Voila! Your package file is ready to be used in Lambda.
 ## IMPORTANT
 1.  When uploading your package in Lambda, don't forget the enviroment variable "AWS_REGION_BUCKET" which is the region where you created the bucket that will hold the podcast.
 
+## Test with Emulambda
+1. install emulambda:
+    * run the following commands:
+        ```
+        pip install git+https://github.com/fugue/emulambda.git
+        ```
+2. export AWS_REGION_BUCKET="eu-west-1"
+3. Test
+    * run the following commands:
+        ```
+        emulambda podcast.handler -v event.json
+        ```
+
 ## Summary
 That's it! Your podcast is ready. Use it on your own, or share the URL with your friends. Optionally publish it as an audio version of your own blog (if you are the content owner).
 

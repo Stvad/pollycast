@@ -4,20 +4,18 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("boto3").setLevel(logging.WARNING)
 
-
-import boto3
 import os
 import feedparser
-from boto3 import Session
-from boto3 import resource
-from botocore.exceptions import BotoCoreError, ClientError
-from contextlib import closing
-from HTMLParser import HTMLParser
-from feedgen.feed import FeedGenerator
-from bs4 import BeautifulSoup
 import datetime
 import dateutil.parser
 import hashlib
+from boto3 import Session
+from boto3 import resource
+from contextlib import closing
+from feedgen.feed import FeedGenerator
+from botocore.exceptions import BotoCoreError
+from bs4 import BeautifulSoup
+
 
 MAX_TPS = 10
 MAX_CONCURENT_CONNECTIONS = 20
@@ -63,16 +61,15 @@ def get_entries(feed):
         for i, chunk in enumerate(chunks):
             if i == 0:
                 chunk = NEW_POST.format(
-                        author=entry.author,
-                        title=entry.title,
-                        content=chunk)
+                    author=entry.author,
+                    title=entry.title,
+                    content=chunk)
             yield dict(
                 content=chunk,
                 id="%s_%d" % (entry.id, i),
                 title=entry.title,
                 published=published - datetime.timedelta(0, i),
             )
-            remaining = chunk
 
 
 def handler(event, context):
@@ -100,14 +97,17 @@ def handler(event, context):
 
     ENTRY_URL = "http://s3-{region}.amazonaws.com/{bucket}/{filename}"
 
-
     for entry in get_entries(feed):
         filename = "%s.mp3" % entry['id']
         fe = fg.add_entry()
         fe.id(entry['id'])
         fe.title(entry['title'])
         fe.published(entry['published'])
-        entry_url = ENTRY_URL.format(bucket=bucket_name, filename=filename, region=os.environ["AWS_REGION_BUCKET"])
+        entry_url = ENTRY_URL.format(
+            bucket=bucket_name,
+            filename=filename,
+            region=os.environ["AWS_REGION_BUCKET"]
+        )
         fe.enclosure(entry_url, 0, 'audio/mpeg')
         if filename in files:
             logging.info('Article "%s" with id %s already exist, skipping.'
@@ -117,9 +117,10 @@ def handler(event, context):
             logging.info("Next entry, size: %d" % len(entry['content']))
             logging.debug("Content: %s" % entry['content'])
             response = polly.synthesize_speech(
-                    Text=entry['content'],
-                    OutputFormat="mp3",
-                    VoiceId="Joanna")
+                Text=entry['content'],
+                OutputFormat="mp3",
+                VoiceId="Joanna"
+            )
             with closing(response["AudioStream"]) as stream:
                 bucket.put_object(Key=filename, Body=stream.read())
         except BotoCoreError as error:
