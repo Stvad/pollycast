@@ -110,7 +110,7 @@ Spin up an Ubuntu container which will have the lambda code you want to package.
 The -vflag makes your code directory available inside the container in a directory called “working”.
 You should now be inside the container at a shell prompt.
 
-    *Install pip and zip.
+    *   Install pip and zip:
 
         ```
         $ apt-get update
@@ -118,14 +118,14 @@ You should now be inside the container at a shell prompt.
         $ apt-get install zip
         ```
 
-    *Install the python requirements
+    *   Install the python requirements:
 
         ```
         $ cd working
         $ pip install -r requirements.txt -t .
         ```
 
-    *Package your code
+    *   Package your code:
 
         ```
         $ zip package.zip podcast.py
