@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import logging
@@ -76,7 +75,7 @@ def get_entries(feed):
             remaining = chunk
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     rss = event['rss']
     bucket_name = event['bucket']
     logging.info("Processing url: %s" % rss)
@@ -99,7 +98,8 @@ def lambda_handler(event, context):
     fg.link(href=feed.feed.link, rel='alternate')
     fg.subtitle(feed.feed.description)
 
-    ENTRY_URL = "http://{bucket}.s3-website.{region}.amazonaws.com/{filename}"
+    ENTRY_URL = "http://s3-{region}.amazonaws.com/{bucket}/{filename}"
+
 
     for entry in get_entries(feed):
         filename = "%s.mp3" % entry['id']

@@ -94,3 +94,23 @@ Some technical experience is required to setup your own instance of the app, but
 ## Summary
 That's it! Your podcast is ready. Use it on your own, or share the URL with your friends. Optionally publish it as an audio version of your own blog (if you are the content owner).
 
+
+##DEV on MAC - making the zip package
+
+docker run -v /Users/adhorn/Projects/amazon-polly-sample:/working -it --rm freshbuntu:podcast
+
+docker run -v <full path directory with your code>:/working -it --rm ubuntu
+
+$ apt-get update
+$ apt-get install python-pip
+$ apt-get install zip
+
+$ cd working
+
+$ pip install -r requirements.txt -t .
+
+$ zip package.zip podcast.py
+
+$ zip -r package.zip .
+
+$ rm -R -- */ [remove all directory]
