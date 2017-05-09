@@ -1,2 +1,5 @@
 *.pyc
 env/
+*.zip
+six.py
+feedparser.py
