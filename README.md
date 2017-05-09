@@ -1,5 +1,7 @@
-Based on https://github.com/awslabs/amazon-polly-sample  but with big modifications
-- not zip included but instead instruction how to use Docker to build the package (see end of this README)
+# Notice
+This repo is based on https://github.com/awslabs/amazon-polly-sample but with big modifications:
+1. This one does not include the ZIP file pachage but instead gives you the instructions on how to use Docker to build the package (see end of this README)
+2. Updated requirements (upgraded AWSCLI)
 
 
 # Amazon Polly Sample
