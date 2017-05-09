@@ -1,4 +1,4 @@
 {
   "rss": "http://feeds.feedburner.com/AmazonWebServicesBlog", 
-  "bucket": "adhorn-polly-podcast"
+  "bucket": "YOUR_BUCKET_NAME"
 }

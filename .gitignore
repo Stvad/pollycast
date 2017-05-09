@@ -3,3 +3,4 @@ env/
 *.zip
 six.py
 feedparser.py
+local_event.json
