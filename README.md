@@ -56,7 +56,12 @@ Some technical experience is required to setup your own instance of the app, but
                     "Action": [
                         "polly:SynthesizeSpeech",
                         "s3:ListBucket",
-                        "s3:PutObject"
+                        "s3:PutObject",
+                        "xray:PutTraceSegments",
+                        "xray:PutTelemetryRecords",
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
                     ],
                     "Resource": "*"
                 }
