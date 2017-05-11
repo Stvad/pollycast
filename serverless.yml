@@ -1,0 +1,22 @@
+service: podcast
+provider:
+  name: aws
+  runtime: python2.7
+  timeout: 300
+  environment:
+    AWS_REGION_BUCKET: "eu-west-1"
+  iamRoleStatements:
+      -  Effect: "Allow"
+         Action:
+           - "polly:SynthesizeSpeech"
+           - "s3:ListBucket"
+           - "s3:PutObject"
+         Resource:
+           - "*"
+package:
+  include:
+    - .vendor/**
+
+functions:
+  handler:
+    handler: podcast.handler

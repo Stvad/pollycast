@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import sys
+sys.path.insert(0, './.vendor')
+
 import logging
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("boto3").setLevel(logging.WARNING)

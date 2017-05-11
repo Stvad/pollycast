@@ -4,3 +4,5 @@ env/
 six.py
 feedparser.py
 local_event.json
+.vendor
+.serverless
