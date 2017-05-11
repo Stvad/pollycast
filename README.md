@@ -131,7 +131,7 @@ Some technical experience is required to setup your own instance of the app, but
     * run the following commands:    
         ```
         $ cd working
-        $ pip install -r requirements.txt -t .
+        $ pip install -r requirements.txt -t .vendor
         ```
 
 5. Package your code.
