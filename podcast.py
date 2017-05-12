@@ -12,13 +12,17 @@ import feedparser
 import datetime
 import dateutil.parser
 import hashlib
-from boto3 import Session
-from boto3 import resource
+# from boto3 import Session
+# from boto3 import resource
 from contextlib import closing
 from feedgen.feed import FeedGenerator
 from botocore.exceptions import BotoCoreError
 from bs4 import BeautifulSoup
 
+from fleece import boto3
+from fleece.xray import (monkey_patch_botocore_for_xray)
+
+monkey_patch_botocore_for_xray()
 
 MAX_TPS = 10
 MAX_CONCURENT_CONNECTIONS = 20
@@ -81,9 +85,9 @@ def handler(event, context):
     logging.info("Processing url: %s" % rss)
     logging.info("Using bucket: %s" % bucket_name)
 
-    session = Session(region_name="us-west-2")
-    polly = session.client("polly")
-    s3 = resource('s3')
+    # session = boto3.Config(region_name="us-west-2") 
+    polly = boto3.client("polly")
+    s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
 
     logging.info("getting list of existing objects in the given bucket")
