@@ -8,6 +8,8 @@ provider:
   iamRoleStatements:
       -  Effect: "Allow"
          Action:
+           - "xray:PutTraceSegments"
+           - "xray:PutTelemetryRecords"
            - "polly:SynthesizeSpeech"
            - "s3:ListBucket"
            - "s3:PutObject"
