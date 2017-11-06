@@ -13,11 +13,15 @@ provider:
            - "polly:SynthesizeSpeech"
            - "s3:ListBucket"
            - "s3:PutObject"
+           - "logs:CreateLogGroup"
+           - "logs:CreateLogStream"
+           - "logs:PutLogEvents"
          Resource:
            - "*"
 package:
   include:
     - .vendor/**
+  artifact: package.zip
 
 functions:
   handler:
