@@ -79,7 +79,7 @@ def get_entries(feed):
             )
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     rss = event['rss']
     bucket_name = event['bucket']
     logging.info("Processing url: %s" % rss)

@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Transform rss text articles into podcasts
+Parameters:
+  Environment:
+    Type: String
+    Default: 'Development'
+Resources:
+  pollyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncrytion:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+  pollycast:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: podcast.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./
+      Timeout: 300
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'xray:PutTraceSegments'
+                - 'xray:PutTelemetryRecords'
+                - 'polly:SynthesizeSpeech'
+                - 'logs:CreateLogGroup'
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+              Resource:
+                - '*'
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:ListBucket'
+                - 's3:PutObject'
+              Resource:
+                - !GettAtt [pollyBucket, Arn]
