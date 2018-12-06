@@ -5,13 +5,14 @@ name = "pypi"
 
 [packages]
 awscli = "*"
-"boto3" = "*"
+#"boto3" = "*"
 feedgen = "==0.4.0"
 feedparser = "==5.2.1"
-python-lambda = "==0.4.0"
+python-lambda = "*"
 "bs4" = "*"
 python-dateutil = "==2.6.0"
-fleece = "==0.11.4"
+#fleece = "==0.11.4"
+fleece = "*"
 
 [dev-packages]
 

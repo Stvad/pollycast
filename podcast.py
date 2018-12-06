@@ -1,19 +1,15 @@
 from __future__ import unicode_literals
 
 import sys
+
 sys.path.insert(0, './.vendor')
 
 import logging
-logging.basicConfig(level=logging.INFO)
-logging.getLogger("boto3").setLevel(logging.WARNING)
 
-import os
 import feedparser
 import datetime
 import dateutil.parser
 import hashlib
-# from boto3 import Session
-# from boto3 import resource
 from contextlib import closing
 from feedgen.feed import FeedGenerator
 from botocore.exceptions import BotoCoreError
@@ -21,6 +17,9 @@ from bs4 import BeautifulSoup
 
 from fleece import boto3
 from fleece.xray import (monkey_patch_botocore_for_xray)
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("boto3").setLevel(logging.WARNING)
 
 monkey_patch_botocore_for_xray()
 
@@ -58,11 +57,11 @@ def get_entries(feed):
     NEW_POST = u"""New post, author {author}, title {title} {content}"""
     for entry in feed.entries:
         if "http" in entry.id:
-            nid = hashlib.md5(str(entry.id))
+            nid = hashlib.md5(str(entry.id).encode("utf-8"))
             entry.id = nid.hexdigest()
         entry_content = entry.content[0].value
         soup = BeautifulSoup(entry_content, 'html.parser')
-        chunks = split_content_by_dot(soup, REQUEST_LIMIT-len(NEW_POST))
+        chunks = split_content_by_dot(soup, REQUEST_LIMIT - len(NEW_POST))
         chunks = list(chunks)
         published = dateutil.parser.parse(entry.published)
         for i, chunk in enumerate(chunks):
@@ -82,10 +81,9 @@ def get_entries(feed):
 def lambda_handler(event, context):
     rss = event['rss']
     bucket_name = event['bucket']
-    logging.info("Processing url: %s" % rss)
-    logging.info("Using bucket: %s" % bucket_name)
+    logging.info(f"Processing url: {rss}")
+    logging.info(f"Using bucket: {bucket_name}")
 
-    # session = boto3.Config(region_name="us-west-2") 
     polly = boto3.client("polly")
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
@@ -96,40 +94,33 @@ def lambda_handler(event, context):
     feed = feedparser.parse(rss)
 
     title = feed['feed']['title']
-    fg = FeedGenerator()
-    fg.load_extension('podcast')
-    fg.title('Audio podcast based on: %s' % title)
-    fg.link(href=feed.feed.link, rel='alternate')
-    fg.subtitle(feed.feed.description)
-
-    ENTRY_URL = "http://s3-{region}.amazonaws.com/{bucket}/{filename}"
+    feed_generator = FeedGenerator()
+    feed_generator.load_extension('podcast')
+    feed_generator.title('Audio podcast based on: %s' % title)
+    feed_generator.link(href=feed.feed.link, rel='alternate')
+    feed_generator.subtitle(feed.feed.description)
 
     for entry in get_entries(feed):
         filename = "%s.mp3" % entry['id']
-        fe = fg.add_entry()
-        fe.id(entry['id'])
-        fe.title(entry['title'])
-        fe.published(entry['published'])
-        entry_url = ENTRY_URL.format(
-            bucket=bucket_name,
-            filename=filename,
-            region=os.environ["AWS_REGION_BUCKET"]
-        )
-        fe.enclosure(entry_url, 0, 'audio/mpeg')
+        feed_entry = feed_generator.add_entry()
+        feed_entry.id(entry['id'])
+        feed_entry.title(entry['title'])
+        feed_entry.published(entry['published'])
+        entry_url = f"http://{bucket_name}.s3.amazonaws.com/{filename}"
+        feed_entry.enclosure(entry_url, 0, 'audio/mpeg')
         if filename in files:
-            logging.info('Article "%s" with id %s already exist, skipping.'
-                         % (entry['title'], entry['id']))
+            logging.info(f'Article "{entry["title"]}" with id {entry["id"]} already exist, skipping.')
             continue
         try:
-            logging.info("Next entry, size: %d" % len(entry['content']))
-            logging.debug("Content: %s" % entry['content'])
+            logging.info(f"Next entry, size: {len(entry['content']):d}")
+            logging.debug(f"Content: {entry['content']}")
             response = polly.synthesize_speech(
                 Text=entry['content'],
                 OutputFormat="mp3",
-                VoiceId="Joanna"
+                VoiceId="Salli"
             )
             with closing(response["AudioStream"]) as stream:
                 bucket.put_object(Key=filename, Body=stream.read())
         except BotoCoreError as error:
             logging.error(error)
-    bucket.put_object(Key='podcast.xml', Body=fg.rss_str(pretty=True))
+    bucket.put_object(Key='podcast.xml', Body=feed_generator.rss_str(pretty=True))
