@@ -11,8 +11,8 @@ feedparser = "==5.2.1"
 python-lambda = "*"
 "bs4" = "*"
 python-dateutil = "==2.6.0"
-#fleece = "==0.11.4"
 fleece = "*"
+newspaper3k = "*"
 
 [dev-packages]
 
