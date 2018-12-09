@@ -4,18 +4,70 @@ Parameters:
   Environment:
     Default: Development
     Type: String
+  RSSFeed:
+    Type: String
 Resources:
   pollyBucket:
     Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: "podcast.xml"
+  pollyBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: pollyBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              Fn::Sub:
+                - "arn:aws:s3:::${bucket_name}/*"
+                - bucket_name:
+                    Ref: pollyBucket
+            Principal: "*"
+  pollyRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Rule to invoke pollycast lambda regularly
+      ScheduleExpression: "rate(5 minutes)"
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - pollycast
+              - Arn
+          Id: "PollyCastFunction"
+          Input:
+            Fn::Sub:
+              - '{
+                    "rss": "${RSSFeed}",
+                    "bucket": "${pollyBucket}"
+                }'
+              - {}
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: pollycast
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - pollyRule
+          - Arn
   pollycast:
     Properties:
-#      CodeUri: ./_build
-      CodeUri: s3://sitalov-mac-duplicati/49d46efbe9efcab8d4cf2886b5775820
+      CodeUri: ./_build
       Handler: podcast.lambda_handler
       Policies:
         - Statement:
             - Action:
                 - polly:SynthesizeSpeech
+                - polly:StartSpeechSynthesisTask
                 - s3:ListBucket
                 - s3:PutObject
                 - xray:PutTraceSegments
