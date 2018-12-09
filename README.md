@@ -1,12 +1,12 @@
-# Notice
-This repo is based on https://github.com/awslabs/amazon-polly-sample but with big modifications:
-1. This one does not include the ZIP file pachage but instead gives you the instructions on how to use Docker to build the package (see end of this README)
-2. Updated requirements (upgraded AWSCLI)
-3. Updated S3 URL format in the lamdba_function code (using Environment variables for the bucket's region)
-
-
-# Amazon Polly Sample
+# Polly podcast
 This app allows you to easily convert any publicly available RSS content into audio Podcasts, so you can listen to your favorite blogs on mobile devices instead of reading them.
+
+# Notice
+This repo is based on https://github.com/awslabs/amazon-polly-sample but this version actually works.
+* The podcast file links are not broken;
+* Support for far larger text length
+* Support for extracting content from the link provided in RSS feed (I use this to convert my Pocket-saved articles)
+
 
 # Requirements
 You will need an AWS account and an RSS feed.
@@ -18,90 +18,21 @@ Some technical experience is required to setup your own instance of the app, but
 3. When any new text content is available, it is retrieved, converted into lifelike speech using Amazon Polly, and stored as a set of audio files in a chosen S3 bucket.
 4. The same S3 bucket that hosts podcast.xml can be pointed to by any Podcast application (like iTunes), in order to play the audio content.
 
-# Setup
-## S3
-1. Login to your AWS account.
-2. Create a new S3 bucket that will be used to store synthesized audio.
-    * Go to the bucket properties->Permissions->Add bucket policy and paste the following policy:
-    
-        ```
-        {
-            "Version": "2012-10-17",
-            "Statement": [{
-                "Sid": "AddPerm",
-                "Effect": "Allow",
-                "Principal": "*",
-                "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/*"
-        }]}
-        ```
-        Make sure to substitute YOUR_BUCKET_NAME with an arbitrary name, keeping in mind that it has to be globally unique. Save the policy.
-    * Expand the "Static Website Hosting" section in the bucket properties, choose "Enable website hosting", type "podcast.xml" in the "Index Document" field, and save the settings.
+# AWS Resources Setup
 
-## Lambda
-1. Create a new Lambda function.
-2. Choose "Python 2.7" as runtime and "hello-world-python" as a blueprint. 
-3. Skip triggerts (just click "Next"); we will get to that later.
-4. Choose an arbitrary name for your function, change "Code entry type" to "Upload a .ZIP file", and upload dist/package.zip from this repository.
-5. Choose "Create a custom role" in the "Role" field, which will open a new tab.
-    * In the newly opened tab, change "IAM Role" to "Create a new IAM Role", and choose an arbitrary name for the role.
-    * Expand "View Policy Document", click the "Edit" link, and paste the following content into the text area:
-    
-        ```
-        {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Action": [
-                        "polly:SynthesizeSpeech",
-                        "s3:ListBucket",
-                        "s3:PutObject",
-                        "xray:PutTraceSegments",
-                        "xray:PutTelemetryRecords",
-                        "logs:CreateLogGroup",
-                        "logs:CreateLogStream",
-                        "logs:PutLogEvents"
-                    ],
-                    "Resource": "*"
-                }
-            ]
-        }
-        ```
-    * Click the "Allow" button at the bottom of the page, which will close the tab and get you back to the Lambda function settings.
-6. Change the Timeout to 5 min 0 seconds.
-7. Click "Next", review the settings, and click "Create function".
-8. Optional check to prove that the new function works as expected:
-    * Click "Test" at the top of the page.
-    * Use the following JSON document as test even input:
-    
-        ```
-        {
-          "rss": "http://feeds.feedburner.com/AmazonWebServicesBlog", 
-          "bucket": "YOUR_BUCKET_NAME"
-        }
-        ```
-        Make sure to substitute YOUR_BUCKET_NAME, and feel free to change rss into any RSS URL.
-    * Click "Save and test" and wait until the function is finished. Keep in mind that it may take a while to retrieve, convert and store the content.
-    * Go back to your newly created S3 bucket to see if it contains any new content.
+All relevant resources are defined in `samTempleate.yaml` file.
+So only thing you need to do is to:
 
-## CloudWatch
-1. Go to Amazon CloudWatch, which will be used to periodically trigger your lambda function.
-    * Go to "Events" and click "Create rule".
-    * Select "Schedule" in "Event selector".
-    * In the "Targets" section, choose "Lambda function", and then choose the newly created function. Expand "Configure input", choose "Constant (JSON text)", use the following JSON document:
-    
-        ```
-        {
-          "rss": "http://feeds.feedburner.com/AmazonWebServicesBlog", 
-          "bucket": "YOUR_BUCKET_NAME"
-        }
-        ```
-        That's the same JSON that you used before, to test your function (unless you were brave enough to skip that step). Again, make sure to substitute YOUR_BUCKET_NAME and choose your favorite RSS URL.
-2. Click configure details.
-3. Choose an arbitrary name and click "Create rule".
-4. Go back to your S3 bucket, click on the podcast.xml file that was previously created there, and open "Properties".
-5. Copy link and use it in any Podcast player (like iTunes or any Podcast app in Android). Optionally, use any URL shortener (like bit.ly) to create a short version of the link.
+1. **TODO**. Collect relevant dependencies.
+Section below is kind of relevant, but very moderately.
+Very briefly you need to:
+ * Get all dependencies into some build directory (`pipenv run pip install -r <(pipenv lock -r) --target _build/`)
+ * Add your code there (`cp podcast.py _build`)
+ * And point `CodeUri` in `samTempleate.yaml` to your build directory
+
+2. Run `aws cloudformation package  --template-file samTemplate.yaml --s3-bucket <some_s3_bucket_you_have_access_too>`
+
+3. Run `aws cloudformation deploy --template-file /tmp/packaged.yaml --capabilities CAPABILITY_IAM --parameter-overrides RSSFeed=<link to your rss feed> --stack-name <YOUR STACK NAME>`
 
  
 ## Building the zip package on a MAC (easy on Linux)
@@ -143,8 +74,6 @@ Some technical experience is required to setup your own instance of the app, but
 
 Voila! Your package file is ready to be used in Lambda.
 
-## IMPORTANT
-1.  When uploading your package in Lambda, don't forget the enviroment variable "AWS_REGION_BUCKET" which is the region where you created the bucket that will hold the podcast.
 
 ## Test with Emulambda
 1. install emulambda:
