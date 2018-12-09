@@ -56,6 +56,7 @@ def get_entries(feed: feedparser.FeedParserDict):
                 content=f"{entry.title} by {entry.get('author', authors)}. Published on {entry.published}.\n { article.text }",
                 id=entry.id,
                 title=entry.title,
+                link=entry.link,
                 published=(dateutil.parser.parse(entry.published)),
             )
         except ArticleException as e:
@@ -96,6 +97,8 @@ def lambda_handler(event, _):
 
             feed_entry = feed_generator.add_entry()
             feed_entry.id(entry['id'])
+            feed_entry.link(href=entry['link'])
+            feed_entry.content(entry['content'])
             feed_entry.title(entry['title'] + f". Read by {voice_id}")
             feed_entry.published(entry['published'])
 
@@ -135,10 +138,9 @@ def get_voice_id():
 
 
 def init_feed_generator(feed):
-    title = feed['feed']['title']
     feed_generator = FeedGenerator()
     feed_generator.load_extension('podcast')
-    feed_generator.title(f'Audio podcast based on: {title}')
+    feed_generator.title("PocketCast")
     feed_generator.link(href=feed.feed.link, rel='alternate')
     feed_generator.subtitle(feed.feed.description)
     return feed_generator
