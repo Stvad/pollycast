@@ -24,3 +24,6 @@ class Bucket:
 
     def get_file(self, id):
         return self.files.get(id)
+
+    def __getattr__(self, item):
+        return getattr(self.s3_bucket, item)

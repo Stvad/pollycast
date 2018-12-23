@@ -27,12 +27,12 @@ class Entry:
 
     def as_feed_entry(self) -> FeedEntry:
         result = FeedEntry()
-        result.id(self.d)
+        result.id(self.id)
         result.link(href=self.link)
         result.content(self.content)
         result.title(self.title())
         result.published(self.published)
-        result.enclosure(self.get_file_url(), 0, 'audio/mpeg')
+        result.enclosure(self.file_url, 0, 'audio/mpeg')
 
         return result
 
@@ -65,7 +65,7 @@ class Entry:
 
     @property
     def content(self):
-        return f"{self.title} by {self.authors}. Published on {self.published}.\n {self.article.text}",
+        return f"{self.title()} by {self.authors}. Published on {self.published}.\n {self.article.text}"
 
     @property
     def authors(self):
