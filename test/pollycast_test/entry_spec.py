@@ -1,10 +1,9 @@
 from collections import defaultdict
+from unittest.mock import Mock
 
-import sys
+from expects import expect, contain, equal, be
 from feedparser import FeedParserDict
 from mamba import description, it
-from expects import expect, contain, equal, be
-from unittest.mock import Mock
 
 from pollycast.entry import Entry
 
