@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 awscli = "*"
-#"boto3" = "*"
 feedgen = "==0.4.0"
 feedparser = "==5.2.1"
 python-lambda = "*"
@@ -13,6 +12,9 @@ python-lambda = "*"
 python-dateutil = "==2.6.0"
 fleece = "*"
 newspaper3k = "*"
+boltons = "*"
+expects = "*"
+mamba = "*"
 
 [dev-packages]
 
