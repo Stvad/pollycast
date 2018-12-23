@@ -45,7 +45,7 @@ with description("Entry"):
         file_name = "mock_file_name"
         bucket = mock_bucket(True, file_name)
         entry = Entry(BASIC_INPUT_ENTRY, bucket)
-        entry.file_url
+        entry.file_name
 
         bucket.get_file.assert_called_with(EXAMPLE_ID)
 
@@ -56,6 +56,6 @@ with description("Entry"):
 
         polly.start_speech_synthesis_task = Mock(return_value=defaultdict(lambda: defaultdict(dict)))
 
-        entry.file_url
+        entry.file_name
 
         polly.start_speech_synthesis_task.assert_called()

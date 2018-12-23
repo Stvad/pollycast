@@ -32,12 +32,15 @@ class Entry:
         result.content(self.content)
         result.title(self.title())
         result.published(self.published)
-        result.enclosure(self.file_url, 0, 'audio/mpeg')
+        result.enclosure(self.get_file_url(), 0, 'audio/mpeg')
 
         return result
 
+    def get_file_url(self):
+        return f"http://{self.bucket.name}.s3.amazonaws.com/{self.file_name}"
+
     @cachedproperty
-    def file_url(self):
+    def file_name(self):
         if self.processed:
             logging.info(f"File with {self.id} id is found. Skipping transcription for this entry")
             return self.bucket.get_file(self.id)
