@@ -77,6 +77,9 @@ class Entry:
 
     @cachedproperty
     def article(self) -> Article:
+        if self.processed:
+            return FeedParserDict(authors='', text='')
+
         article = self.article_supplier(self.input_entry.link)
 
         if "content" in self.input_entry:
