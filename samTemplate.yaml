@@ -62,7 +62,7 @@ Resources:
   pollycast:
     Properties:
       CodeUri: ./_build
-      Handler: podcast.lambda_handler
+      Handler: pollycast.lambda_handler
       Policies:
         - Statement:
             - Action:

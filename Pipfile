@@ -15,6 +15,7 @@ newspaper3k = "*"
 boltons = "*"
 expects = "*"
 mamba = "*"
+dataclasses = "*"
 
 [dev-packages]
 
