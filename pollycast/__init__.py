@@ -32,5 +32,5 @@ def init_feed_generator(feed):
     feed_generator.load_extension('podcast')
     feed_generator.title("PocketCast")
     feed_generator.link(href=feed.feed.link, rel='alternate')
-    feed_generator.subtitle(feed.feed.description)
+    feed_generator.subtitle(feed.feed.description or 'PocketCast')
     return feed_generator

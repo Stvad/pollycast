@@ -13,11 +13,11 @@ python-dateutil = "==2.6.0"
 fleece = "*"
 newspaper3k = "*"
 boltons = "*"
-expects = "*"
-mamba = "*"
 dataclasses = "*"
 
 [dev-packages]
+expects = "*"
+mamba = "*"
 
 [requires]
 python_version = "3.6"
