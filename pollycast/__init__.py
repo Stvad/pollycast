@@ -1,5 +1,6 @@
-import feedparser
 import logging
+
+import feedparser
 from feedgen.feed import FeedGenerator
 
 from pollycast.bucket import Bucket
@@ -22,7 +23,7 @@ def lambda_handler(event, _):
         try:
             feed_generator.add_entry(entry.as_feed_entry())
         except Exception as e:
-            logging.error(f"Error while processing f{entry}", e)
+            logging.error(f"Error while processing {entry}:\n\n {e}")
 
     bucket.put_object(Key='podcast.xml', Body=feed_generator.rss_str(pretty=True))
 
