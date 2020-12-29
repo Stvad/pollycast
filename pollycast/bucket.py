@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Callable
 
+import boto3
 from boltons.cacheutils import cachedproperty
-from fleece import boto3
 
 
 @dataclass

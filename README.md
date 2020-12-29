@@ -26,13 +26,17 @@ So only thing you need to do is to:
 1. **TODO**. Collect relevant dependencies.
 Section below is kind of relevant, but very moderately.
 Very briefly you need to:
- * Get all dependencies into some build directory (`pipenv run pip install -r <(pipenv lock -r) --target _build/`)
- * Add your code there (`cp podcast.py _build`)
- * And point `CodeUri` in `samTempleate.yaml` to your build directory
 
-2. Run `aws cloudformation package  --template-file samTemplate.yaml --s3-bucket <some_s3_bucket_you_have_access_too>`
+* Get all dependencies into some build
+  directory (`pipenv run pip install -r <(pipenv lock -r) --target _build/`)
+* Add your code there (`cp -Rf pollycast _build/`)
+* And point `CodeUri` in `samTempleate.yaml` to your build directory
 
-3. Run `aws cloudformation deploy --template-file /tmp/packaged.yaml --capabilities CAPABILITY_IAM --parameter-overrides RSSFeed=<link to your rss feed> --stack-name <YOUR STACK NAME>`
+2.
+Run `aws cloudformation package --template-file samTemplate.yaml --s3-bucket <some_s3_bucket_you_have_access_to> > /tmp/packaged.yml`
+
+3.
+Run `aws cloudformation deploy --template-file /tmp/packaged.yaml --capabilities CAPABILITY_IAM --parameter-overrides RSSFeed=<link to your rss feed> --stack-name <YOUR STACK NAME>`
 
  
 ## Building the zip package on a MAC (easy on Linux)
@@ -53,9 +57,10 @@ Very briefly you need to:
 3. Install pip and zip.
     * run the following commands:    
         ```
-        $ apt-get update
-        $ apt-get install python-pip
-        $ apt-get install zip
+        apt-get update
+        apt-get install python3-pip
+        apt-get install zip
+        pip3 install pipenv
         ```
 
 4. Install the python requirements.

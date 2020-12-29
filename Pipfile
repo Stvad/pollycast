@@ -4,20 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-awscli = "*"
 feedgen = "==0.4.0"
 feedparser = "==5.2.1"
-python-lambda = "*"
 "bs4" = "*"
 python-dateutil = "==2.6.0"
-fleece = "*"
 newspaper3k = "*"
 boltons = "*"
-dataclasses = "*"
+boto3 = "*"
 
 [dev-packages]
 expects = "*"
 mamba = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"

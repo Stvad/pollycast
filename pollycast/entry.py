@@ -3,12 +3,11 @@ import logging
 from dataclasses import dataclass, field
 from typing import Callable
 
+import boto3
 from boltons.cacheutils import cachedproperty
 from feedgen.entry import FeedEntry
 from feedparser import FeedParserDict
-from fleece import boto3
 from newspaper import Article
-
 from pollycast.bucket import Bucket
 from pollycast.voice_utils import random_voice_id
 
@@ -50,6 +49,7 @@ class Entry:
     def synthesize_speech(self):
         file_prefix = f"{self.id}.{self.voice}"
         response = self.polly.start_speech_synthesis_task(
+            Engine="neural",
             Text=self.content,
             OutputFormat=SYNTHESIS_FORMAT,
             OutputS3BucketName=self.bucket.name,

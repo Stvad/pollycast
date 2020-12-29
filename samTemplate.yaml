@@ -33,7 +33,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: Rule to invoke pollycast lambda regularly
-      ScheduleExpression: "rate(5 minutes)"
+      ScheduleExpression: "rate(3 minutes)"
       State: ENABLED
       Targets:
         - Arn:
@@ -63,6 +63,13 @@ Resources:
     Properties:
       CodeUri: ./_build
       Handler: pollycast.lambda_handler
+      Environment:
+        Variables:
+          # todo how do I prioritize some? - can add them to the list multiple times.
+          # these are kids voices :p removing them for now.
+          # "Justin","Ivy"
+          # from https://docs.aws.amazon.com/polly/latest/dg/ntts-voices-main.html
+          Voices: Salli,Joey,Matthew,Joanna,Kendra,Kimberly,Amy,Emma,Brian
       Policies:
         - Statement:
             - Action:
@@ -90,7 +97,7 @@ Resources:
                     - pollyBucket
                     - Arn
           Version: '2012-10-17'
-      Runtime: python3.6
+      Runtime: python3.8
       Timeout: 300
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31
